@@ -128,6 +128,8 @@ packages = [
 preamble = "\\def\\pgfsysdriver{pgfsys-ximera.def}\\PassOptionsToPackage{dvisvgm}{graphicx}\\PassOptionsToPackage{hypertex}{hyperref}\\RequirePackage{expl3}\\RequirePackage[makeroom]{cancel}" + packages.map( (package) => `\\RequirePackage{${package}}` ).join('') + tikzlibraries + "\\PassOptionsToClass{web}{ximera}\\let\\abovecaptionskip=\\relax\\let\\belowcaptionskip=\\relax\\let\\maketitle=\\relax\n";
 
 preamble = preamble + "\\documentclass{ximera}\\renewcommand{\\documentclass}[2][]{}\\snapshot\n";
+//preamble = "\\documentclass{article}\n\\begin{document}\\lowercase{HELLO} \\the\\catcode`\\^^@\\Ucharcat 65 10 is an A? \\end{document}\n";
+//preamble = "\\input{downcase.tex}\n";
 
 library.setMemory(memory.buffer);
 library.setInput("\n&latex\n" + preamble + "\n\n\n",

@@ -3,11 +3,7 @@ var process = require('process');
 var callstack = [];
 var stackstack = [];
 var files = [];
-
-var kpathsea = require('node-kpathsea');
-const Kpathsea = kpathsea.Kpathsea;
-const FILE_FORMAT = kpathsea.FILE_FORMAT;
-const kpse = new Kpathsea("latex");
+var exec = require('child_process').execSync;
 
 var memory = undefined;
 var inputBuffer = undefined;
@@ -18,6 +14,13 @@ let wasmExports;
 let view;
 
 let window = {};
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  prompt: ''
+});
 
 let DATA_ADDR = 2400 * 1024*64;
 let END_ADDR = 2500 * 1024*64;
@@ -90,11 +93,11 @@ module.exports = {
     var string = String.fromCharCode.apply(null, buffer);
 
     if (file.stdout) {
-      process.stdout.write(string, () => {});
+      process.stdout.write(string);
       return;
     }
 
-    fs.writeSync( file.descriptor, string );
+    fs.writeSync( file.descriptor, string );    
   },
   
   printBoolean: function(descriptor, x) {
@@ -107,7 +110,7 @@ module.exports = {
       return;
     }
 
-    fs.writeSync( file.descriptor, result );
+    fs.writeSync( file.descriptor, result );    
   },
   printChar: function(descriptor, x) {
     var file = (descriptor < 0) ? {stdout:true} : files[descriptor];        
@@ -127,7 +130,7 @@ module.exports = {
       return;
     }
 
-    fs.writeSync( file.descriptor, x.toString() );
+    fs.writeSync( file.descriptor, x.toString());
   },
   printFloat: function(descriptor, x) {
     var file = (descriptor < 0) ? {stdout:true} : files[descriptor];                
@@ -136,7 +139,7 @@ module.exports = {
       return;
     }
 
-    fs.writeSync( file.descriptor, x.toString() );
+    fs.writeSync( file.descriptor, x.toString());    
   },
   printNewline: function(descriptor, x) {
     var file = (descriptor < 0) ? {stdout:true} : files[descriptor];                    
@@ -145,44 +148,24 @@ module.exports = {
       return;
     }
 
-    fs.writeSync( file.descriptor, "\n" );
+    fs.writeSync( file.descriptor, "\n");    
   },
 
   reset: function(length, pointer) {    
     var buffer = new Uint8Array( memory, pointer, length );
     var filename = String.fromCharCode.apply(null, buffer);
 
-    filename = filename.replace(/\000+$/g,'');
-    
     if (filename.startsWith('{')) {
       filename = filename.replace(/^{/g,'');
       filename = filename.replace(/}.*/g,''); 
     }
-
-    if (filename.startsWith('"')) {
-      filename = filename.replace(/^"/g,'');
-      filename = filename.replace(/".*/g,''); 
-    }    
     
     filename = filename.replace(/ +$/g,'');
-    filename = filename.replace(/^\*/,'');
+    filename = filename.replace(/^\*/,'');    
+    filename = filename.replace(/^TeXfonts:/,'');    
 
-    let format = FILE_FORMAT.TEX;
-    
-    if (filename.startsWith('TeXfonts:')) {
-      filename = filename.replace(/^TeXfonts:/,'');
-      format = FILE_FORMAT.TFM;
-    }
-
-    if (filename == 'TeXformats:TEX.POOL') {
+    if (filename == 'TeXformats:TEX.POOL')
       filename = texPool;
-      format = FILE_FORMAT.TEXPOOL;
-    }
-
-    if (filename == 'tex.pool') {
-      filename = texPool;      
-      format = FILE_FORMAT.TEXPOOL;
-    }
 
     if (filename == "TTY:") {
       files.push({ filename: "stdin",
@@ -195,10 +178,10 @@ module.exports = {
                  });
       return files.length - 1;
     }
-    
-    var path = kpse.findFile(filename, format);
-    
-    if (path == undefined) {
+
+    try {
+      var path = exec('kpsewhich ' + filename).toString().split("\n")[0];
+    } catch (e) {
       files.push({
         filename: filename,
         erstat: 1
@@ -235,9 +218,7 @@ module.exports = {
     files.push({
       filename: filename,
       position: 0,
-      writing: true,
-      erstat: 0,
-      output: [],
+      erstat: 0,      
       descriptor: fs.openSync(filename,'w')
     });
     
@@ -254,22 +235,15 @@ module.exports = {
     }
     
     filename = filename.replace(/ +$/g,'');
-    filename = filename.replace(/^\*/,'');
-    
-    let format = FILE_FORMAT.TEX;
-    if (filename.startsWith('TeXfonts:')) {
-      filename = filename.replace(/^TeXfonts:/,'');
-      format = FILE_FORMAT.TFM;
-    }
+    filename = filename.replace(/^\*/,'');    
+    filename = filename.replace(/^TeXfonts:/,'');    
 
-    if (filename == 'TeXformats:TEX.POOL') {
+    if (filename == 'TeXformats:TEX.POOL')
       filename = "tex.pool";
-      format = FILE_FORMAT.TEXPOOL;
-    }
 
-    filename = kpse.findFile(filename, format);
-    
-    if (filename) {
+    try {
+      filename = exec('kpsewhich ' + filename).toString().split("\n")[0];
+    } catch (e) {
       try {
         var stats = fs.statSync(filename);
 
@@ -285,12 +259,8 @@ module.exports = {
   close: function(descriptor) {
     var file = files[descriptor];
 
-    if (file.descriptor) {
-      if (file.writing) {
-        fs.write( file.descriptor, Buffer.concat( file.output ), () => {} );
-      }
-      fs.close( file.descriptor, () => {} );
-    }
+    if (file.descriptor)
+      fs.closeSync( file.descriptor );
 
     files[descriptor] = {};
   },
@@ -415,11 +385,7 @@ module.exports = {
       }
     } else {
       if (file.descriptor) {
-        let endOfCopy = Math.min( file.position + length, file.content.length );
-        
-        var bytesCopied = file.content.copy( buffer, pointer, file.position, endOfCopy );
-        
-        if (bytesCopied == 0) {
+        if (fs.readSync( file.descriptor, buffer, pointer, length, file.position ) == 0) {
           buffer[pointer] = 0;
           file.eof = true;
           file.eoln = true;
@@ -443,10 +409,10 @@ module.exports = {
   
   put: function(descriptor, pointer, length) {
     var file = files[descriptor];
-    var buffer = new Uint8Array( memory, pointer, length );
     
-    if (file.writing)
-      file.output.push( Buffer.from(buffer) );
+    var buffer = new Uint8Array( memory );
+
+    fs.writeSync( file.descriptor, buffer, pointer, length );
   },
 
   snapshot: function() {
