@@ -2,6 +2,7 @@ var fs = require('fs');
 var library = require('./library');
 
 var binary = fs.readFileSync('tex-async.wasm');
+//var binary = fs.readFileSync('tex.wasm');
 
 var code = new WebAssembly.Module(binary);
 
@@ -125,9 +126,21 @@ packages = [
 "ifvtex"
 ]
 
-preamble = "\\def\\pgfsysdriver{pgfsys-ximera.def}\\PassOptionsToPackage{dvisvgm}{graphicx}\\PassOptionsToPackage{hypertex}{hyperref}\\RequirePackage{expl3}\\RequirePackage[makeroom]{cancel}" + packages.map( (package) => `\\RequirePackage{${package}}` ).join('') + tikzlibraries + "\\PassOptionsToClass{web}{ximera}\\let\\abovecaptionskip=\\relax\\let\\belowcaptionskip=\\relax\\let\\maketitle=\\relax\n";
+//preamble = "\\def\\pgfsysdriver{pgfsys-ximera.def}\\PassOptionsToPackage{dvisvgm}{graphicx}\\PassOptionsToPackage{hypertex}{hyperref}\\RequirePackage{expl3}\\RequirePackage[makeroom]{cancel}" + packages.map( (package) => `\\RequirePackage{${package}}` ).join('') + tikzlibraries + "\\PassOptionsToClass{web}{ximera}\\let\\abovecaptionskip=\\relax\\let\\belowcaptionskip=\\relax\\let\\maketitle=\\relax\n";
+//preamble = "\\def\\pgfsysdriver{pgfsys-ximera.def}\\PassOptionsToPackage{dvisvgm}{graphicx}\\PassOptionsToPackage{hypertex}{hyperref}\\RequirePackage{expl3}\\RequirePackage[makeroom]{cancel}" + packages.map( (package) => `\\RequirePackage{${package}}` ).join('') + tikzlibraries + "\\let\\abovecaptionskip=\\relax\\let\\belowcaptionskip=\\relax\\let\\maketitle=\\relax\n";
 
-preamble = preamble + "\\documentclass{ximera}\\renewcommand{\\documentclass}[2][]{}\\snapshot\n";
+
+//preamble = preamble + "\\documentclass{ximera}\\renewcommand{\\documentclass}[2][]{}\\snapshot\n";
+
+preamble = preamble + "\\documentclass[margin=0pt]{standalone}\n";//\\renewcommand{\\documentclass}[2][]{}\\snapshot\n";
+
+
+preamble = "\\def\\pgfsysdriver{pgfsys-ximera.def}\\PassOptionsToPackage{dvisvgm}{graphicx}\\documentclass{ximera}\n\\usepackage{tikz}\n\\usepackage{amsfonts}\n\\PassOptionsToClass{web}{ximera}\n" + "\\usepackage{nopageno}\n";
+
+//preamble = preamble + "\\RequirePackage{tikz}\\RequirePackage{amssymb}\\RequirePackage{amsfonts}\\RequirePackage{amsmath}\\RequirePackage{amstext}" + tikzlibraries + "\n";
+
+//preamble = preamble + packages.map( (package) => `\\RequirePackage{${package}}` ).join('') + "\n\\usepackage{nopageno}"
+
 //preamble = "\\documentclass{article}\n\\begin{document}\\lowercase{HELLO} \\the\\catcode`\\^^@\\Ucharcat 65 10 is an A? \\end{document}\n";
 //preamble = "\\input{downcase.tex}\n";
 

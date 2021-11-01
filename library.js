@@ -97,6 +97,7 @@ module.exports = {
       return;
     }
 
+    //console.log('>>>>> printSTring ' + file.filename + string);
     fs.writeSync( file.descriptor, string );    
   },
   
@@ -121,6 +122,8 @@ module.exports = {
 
     var b = Buffer.alloc(1);
     b[0] = x;
+
+    //console.log('>>>>> printChar ' + file.filename + x.toString());
     fs.writeSync( file.descriptor, b );
   },
   printInteger: function(descriptor, x) {
@@ -202,9 +205,13 @@ module.exports = {
     return files.length - 1;
   },
 
-  rewrite: function(length, pointer) {
+  rewrite: function (length, pointer) {
+    
     var buffer = new Uint8Array( memory, pointer, length );
-    var filename = String.fromCharCode.apply(null, buffer);    
+    var filename = String.fromCharCode.apply(null, buffer);
+    
+    //console.log('rewrite ' + filename);
+
     filename = filename.replace(/ +$/g,'');    
     
     if (filename == "TTY:") {
@@ -411,6 +418,8 @@ module.exports = {
     var file = files[descriptor];
     
     var buffer = new Uint8Array( memory );
+
+    //console.log('>>>>>> put ' + file.filename);
 
     fs.writeSync( file.descriptor, buffer, pointer, length );
   },

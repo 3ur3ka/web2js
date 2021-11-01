@@ -184,7 +184,7 @@ module.dispose();
 
 var code = new WebAssembly.Module(binary);
 
-var pages = 20;
+var pages = 2500;
 var memory = new WebAssembly.Memory({initial: pages, maximum: pages});
 
 var callstack = [];
