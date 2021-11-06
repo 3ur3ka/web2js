@@ -31,8 +31,8 @@ tex.wasm: tex.p parser.js
 # --mod-asyncify-never-unwind
 #	wasm-opt --code-folding --coalesce-locals-learning --precompute-propagate --code-pushing --simplify-locals --flatten --relooper-jump-threading --rereloop --dfo --rereloop --rereloop --ssa-nomerge --local-cse --asyncify --pass-arg=asyncify-ignore-indirect --licm --flatten --rereloop --merge-locals --merge-blocks --remove-unused-brs --remove-unused-names --dae-optimizing --inlining-optimizing --generate-stack-ir --optimize-stack-ir --optimize-instructions --vacuum -O4 -O4 $< -o $@
 tex-async.wasm: tex.wasm
-    wasm-opt --code-folding --coalesce-locals-learning --precompute-propagate --code-pushing --simplify-locals --flatten --rereloop --dfo --rereloop --rereloop --ssa-nomerge --local-cse --asyncify --pass-arg=asyncify-ignore-indirect --licm --flatten --rereloop --merge-locals --merge-blocks --remove-unused-brs --remove-unused-names --dae-optimizing --inlining-optimizing --generate-stack-ir --optimize-stack-ir --optimize-instructions --vacuum -O4 -O4 $< -o $@
-	echo wasm-opt --asyncify --pass-arg=asyncify-ignore-indirect --mod-asyncify-never-unwind -O3 $< -o $@
+    wasm-opt --code-folding --coalesce-locals-learning --precompute-propagate --code-pushing --simplify-locals --flatten --rereloop --dfo --rereloop --rereloop --ssa-nomerge --local-cse --asyncify --pass-arg=asyncify-ignore-indirect --licm --flatten --rereloop --merge-locals --merge-blocks --remove-unused-brs --remove-unused-names --dae-optimizing --inlining-optimizing --generate-stack-ir --optimize-stack-ir --optimize-instructions --vacuum --enable-threads -O4 -O4 $< -o $@
+	echo wasm-opt --asyncify --pass-arg=asyncify-ignore-indirect --mod-asyncify-never-unwind --enable-threads -O3 $< -o $@
 
 core.dump: tex-async.wasm library.js
 	node initex.js

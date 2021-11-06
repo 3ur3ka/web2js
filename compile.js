@@ -167,6 +167,15 @@ var module = program.generate();
 // module.runPasses(["remove-unused-brs","pick-load-signs","precompute","precompute-propagate","code-pushing","duplicate-function-elimination","inlining-optimizing","dae-optimizing","generate-stack-ir","optimize-stack-ir"]);
 
 //module.runPasses(["remove-unused-brs","pick-load-signs","precompute","precompute-propagate","code-pushing","duplicate-function-elimination","inlining-optimizing","dae-optimizing","generate-stack-ir","optimize-stack-ir"]);
+// Optimize the module using default passes and levels
+
+//module.runPasses(["enable-threads"]);
+//module.optimize();
+
+// Validate the module
+//if (!module.validate())
+//  throw new Error("validation error");
+
 
 fs.writeFileSync( process.argv[3], module.emitBinary() );
 

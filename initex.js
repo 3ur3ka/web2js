@@ -132,11 +132,15 @@ packages = [
 
 //preamble = preamble + "\\documentclass{ximera}\\renewcommand{\\documentclass}[2][]{}\\snapshot\n";
 
-preamble = preamble + "\\documentclass[margin=0pt]{standalone}\n";//\\renewcommand{\\documentclass}[2][]{}\\snapshot\n";
+//preamble = preamble + "\\documentclass[margin=0pt]{standalone}\n";//\\renewcommand{\\documentclass}[2][]{}\\snapshot\n";
 
 
-preamble = "\\def\\pgfsysdriver{pgfsys-ximera.def}\\PassOptionsToPackage{dvisvgm}{graphicx}\\documentclass{ximera}\n\\usepackage{tikz}\n\\usepackage{amsfonts}\n\\PassOptionsToClass{web}{ximera}\n" + "\\usepackage{nopageno}\n";
+preamble = "\\def\\pgfsysdriver{pgfsys-ximera.def}\n\\thispagestyle{empty}\n\\PassOptionsToPackage{dvisvgm}{graphicx}\\documentclass{standalone}\n\\usepackage{pgfplots}\n\\usepackage{tikz}\n\\usepackage[utf8]{inputenc}\n\\usepackage{ifthen}\n\\usepackage{amsmath}\n\\usepackage{amsfonts}\n";//\\usetikzlibrary{backgrounds}\n\\usepackage{ifthen}\n"; //\\PassOptionsToClass{web}{ximera}\n";
 
+//preamble = "\\def\\pgfsysdriver{pgfsys-ximera.def}\n\\thispagestyle{empty}\n\\documentclass[margin=0pt]{ximera}\n\\usepackage{tikz}\n\\usepackage{amsfonts}\n" +
+  //"\\usepackage{blindtext}\n" +
+//  "\\usepackage[active, tightpage]{preview}\n" + "\\PreviewEnvironment{tikzpicture}";
+  //"\\setlength\\PreviewBorder{0pt}"
 //preamble = preamble + "\\RequirePackage{tikz}\\RequirePackage{amssymb}\\RequirePackage{amsfonts}\\RequirePackage{amsmath}\\RequirePackage{amstext}" + tikzlibraries + "\n";
 
 //preamble = preamble + packages.map( (package) => `\\RequirePackage{${package}}` ).join('') + "\n\\usepackage{nopageno}"

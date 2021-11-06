@@ -29,11 +29,13 @@
   \pgf@sys@svg@inpicturetrue% in a picture
   \pgfsys@svg@boxmodefalse%
   \special{dvisvgm:beginpicture}
-  \pgfsys@invoke{<g \ifx\pgf@sys@svg@last@stroke\relax\else
-    stroke="\pgf@sys@svg@last@stroke" \fi stroke-miterlimit="10" transform="scale(1,-1)">}}
+  \pgfsysprotocol@literal{<g \ifx\pgf@sys@svg@last@stroke\relax\else
+    stroke="\pgf@sys@svg@last@stroke" \fi stroke-miterlimit="10" transform="translate(\pgf@sys@tonumber{\pgf@xa},\pgf@sys@tonumber{\pgf@ya}) scale(1,-1)">}}
 
 \def\pgfsys@endpicture{\pgfsys@invoke{</g>}\special{dvisvgm:endpicture}\special{color pop}}
 
+%% \pgfsys@invoke{<g \ifx\pgf@sys@svg@last@stroke\relax\else
+%%    stroke="\pgf@sys@svg@last@stroke" \fi stroke-miterlimit="10" transform="translate(\pgf@xa,\pgf@ya) scale(1,-1)">}}
 %% 
 %% Copyright (C) 2018-2021 by Bart Snapp <bart.snapp@gmail.com> and Jim Fowler <kisonecat@gmail.com>
 %% 

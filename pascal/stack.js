@@ -8,23 +8,29 @@ module.exports = class Stack {
     
     this.module.addGlobal( "stack", Binaryen.i32, true, this.module.i32.const(this.memory.pages*65536 - 1) );
 
-    var getType=this.module.addFunctionType(null,Binaryen.i32,[]);
+    //Old: Module#addFunction(name: string, functionType: Signature, varTypes: Type[], body: Expression): Function
+    //New: Module#addFunction(name: string, params: Type, results: Type, vars: Type[], body: ExpressionRef): FunctionRef
+
+    //var getType=this.module.addFunctionType(null,Binaryen.i32,[]);
 
     var getCode = this.module.block(null, [
       this.module.return(
         this.module.global.get( "stack", Binaryen.i32 )
       )
     ]);
-    this.module.addFunction("getStackPointer",getType,[],getCode);
+    //this.module.addFunction("getStackPointer", getType, [], getCode);
+    this.module.addFunction("getStackPointer",Binaryen.none,Binaryen.i32,[],getCode);
     this.module.addFunctionExport("getStackPointer","getStackPointer");
 
-    var setType=this.module.addFunctionType(null,Binaryen.none,[Binaryen.i32]);
+    //var setType = this.module.addFunctionType(null, Binaryen.none, [Binaryen.i32]);
+
     var setCode = this.module.block(null, [
       this.module.global.set( "stack",
                               this.module.local.get( 0, Binaryen.i32 )
                             )
     ]);
-    this.module.addFunction("setStackPointer",setType,[],setCode);
+    //this.module.addFunction("setStackPointer", setType, [], setCode);
+    this.module.addFunction("setStackPointer",Binaryen.i32,Binaryen.none,[],setCode);
     this.module.addFunctionExport("setStackPointer","setStackPointer");
   }
     

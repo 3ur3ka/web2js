@@ -239,12 +239,12 @@
 \ifweb\paperheight 100in\PassOptionsToPackage{margin=1in}{geometry}\fi
 \RequirePackage{geometry}
 
-%\ifdefined\snapshot\AtBeginDocument{%
-%  \snapshot%
-%  \hsize=\directjs{tex.print(tex.hsize)}pt%
-%  \setlength{\textwidth}{\directjs{tex.print(tex.hsize)}pt}%}
-%  \setlength{\linewidth}{\directjs{tex.print(tex.hsize)}pt}%}
-%}\fi
+%%\ifdefined\snapshot\AtBeginDocument{%
+%%  \snapshot%
+%%  \hsize=\directjs{tex.print(tex.hsize)}pt%
+%%  \setlength{\textwidth}{\directjs{tex.print(tex.hsize)}pt}%}
+%%  \setlength{\linewidth}{\directjs{tex.print(tex.hsize)}pt}%}
+%%}\fi
 
 \newcommand{\license}{\excludecomment}
 
@@ -1268,6 +1268,8 @@ Interactive
 \apptocmd{\endenumerate}{\special{html </ol>}}{}{}
 \pretocmd{\@item}{\special{html <li>}}{}{}
 \fi
+
+
 %% 
 %% Copyright (C) 2018-2021 by Bart Snapp <bart.snapp@gmail.com> and Jim Fowler <kisonecat@gmail.com>
 %% 

@@ -96,8 +96,10 @@ module.exports = class FunctionDeclaration {
           environment.variables[param.names[j].name] = v;
       }
     }
+    //Old: Module#addFunction(name: string, functionType: Signature, varTypes: Type[], body: Expression): Function
+    //New: Module#addFunction(name: string, params: Type, results: Type, vars: Type[], body: ExpressionRef): FunctionRef
 
-    var functionType = module.addFunctionType(null, result, []);
+    //var functionType = module.addFunctionType(null, result, []);
 
     var code = this.block.generate(environment);
 
@@ -111,14 +113,16 @@ module.exports = class FunctionDeclaration {
                                    environment.program.stack.shrink( offset ),
                                    module.return( module.local.get( 1, result ) )] );
       
-      module.addFunction(this.identifier.name, functionType, [Binaryen.i32, result], code);
+      //module.addFunction(this.identifier.name, functionType, [Binaryen.i32, result], code);
+      module.addFunction(this.identifier.name, Binaryen.none, result, [Binaryen.i32, result], code);
     } else {
       code = module.block( null, [ environment.program.stack.extend( offset - paramOffset ),
                                    module.local.set(0, module.global.get( "stack", Binaryen.i32 )),
                                    code,
                                    environment.program.stack.shrink( offset ),
                                    ] );
-      module.addFunction(this.identifier.name, functionType, [Binaryen.i32], code);
+      //module.addFunction(this.identifier.name, functionType, [Binaryen.i32], code);
+      module.addFunction(this.identifier.name, Binaryen.none, result, [Binaryen.i32], code);
     }
     
     id = id + 1;
